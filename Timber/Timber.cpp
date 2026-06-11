@@ -14,7 +14,8 @@ constexpr sf::Vector2f WINDOW_CENTER_BOTTOM = { WINDOW_WIDTH_CENTER, WINDOW_HEIG
 constexpr float OFFSCREEN_LEFT = -300.f;
 constexpr float OFFSCREEN_RIGHT = WINDOW_WIDTH + 200.f;
 
-enum Side { None, Left, Right };
+enum class Side { None, Left, Right };
+enum class GameState { PAUSED, PLAYING, GAMEOVER };
 
 struct MovingEntity
 {
@@ -172,12 +173,28 @@ void UpdateTimeBar(sf::RectangleShape& timeBar, sf::Vector2f size) {
 	timeBar.setPosition({ WINDOW_WIDTH_CENTER, WINDOW_HEIGHT - (timeBar.getSize().y + 5) });
 }
 
+float UpdateFPS(float dt) {
+	static float timeAccumulator = 0.0f;
+	static int frameCount = 0;
+	static float currentFPS = 0.0f;
+
+	timeAccumulator += dt;
+	frameCount++;
+	if (timeAccumulator >= 1.0f) {
+		currentFPS = static_cast<float>(frameCount) / timeAccumulator;
+		timeAccumulator -= 1.0f;
+		frameCount = 0;
+	}
+	return currentFPS;
+}
+
 int main()
 {
 	// Initialization
 	std::cout << "[LOG] Application Started" << std::endl;
-	bool isPaused = true;
+	//bool isPaused = true;
 	int score = 0;
+	GameState currentState = GameState::PAUSED;
 	srand(static_cast<unsigned>(time(nullptr)));
 
 	sf::RenderWindow window(
@@ -252,10 +269,12 @@ int main()
 		return -1;
 	}
 	sf::Text scoreText(font, "Score : " + score, 30);
+	sf::Text fpsText(font, "FPS : 000", 30);
 	sf::Text messageText(font, "Press [ ENTER ] to start", 50);
 	SetMessageTextLabel(messageText, "Press [ ENTER ] to start", (sf::Color::White));
 	scoreText.setFillColor(sf::Color::White);
 	scoreText.setPosition({ 20, 20 });
+	fpsText.setPosition({ 20, 60 });
 
 	// Game Loop
 	while (window.isOpen())
@@ -273,24 +292,25 @@ int main()
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Escape))
 		{
 			std::cout << "[INPUT] Escape Pressed" << std::endl;
-			if (isPaused) {
+			if (currentState == GameState::PAUSED) {
+				currentState = GameState::GAMEOVER;
 				window.close();
 			}
 			else {
-				isPaused = true;
+				currentState = GameState::PAUSED;
 				SetMessageTextLabel(messageText, "PAUSED!", (sf::Color::Yellow));
 			}
 		}
 		// Start the game
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Enter))
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Enter) && currentState != GameState::PLAYING)
 		{
-			isPaused = false;
+			currentState = GameState::PLAYING;
 			// Reset the time and the score
 			score = 0;
 			timeRemaining = 6;
 		}
 
-		if (!isPaused) {
+		if (currentState == GameState::PLAYING) {
 			// Update
 			// Measure time
 			const float dt = clock.restart().asSeconds();
@@ -298,20 +318,26 @@ int main()
 			UpdateTimeBar(timeBar, { timeBarwidthPerSecond * timeRemaining, timeBarHeight });
 
 			if (timeRemaining <= 0.0f) {
-				isPaused = true;
+				currentState = GameState::GAMEOVER;
 				SetMessageTextLabel(messageText, "Out Of Time !", (sf::Color::Red));
 			}
 			for (auto& entity : entities)
 			{
 				entity->Update(dt);
 			}
-			for (int i = 0;i<branches.size(); i++)
+			for (int i = 0; i < branches.size(); i++)
 			{
 				branches[i]->Update(i);
 			}
 			std::stringstream ss;
 			ss << "Score : " << score;
 			scoreText.setString(ss.str());
+			std::stringstream sfps;
+			sfps << "FPS : " << UpdateFPS(dt);
+			fpsText.setString(sfps.str());
+		}
+		else {
+			clock.restart();
 		}
 
 		// Render
@@ -328,12 +354,13 @@ int main()
 			window.draw(branch->GetSprite());
 		}
 		window.draw(scoreText);
-		if (isPaused)
+		if (currentState != GameState::PLAYING)
 		{
 			// Draw our message
 			window.draw(messageText);
 		}
 		window.draw(timeBar);
+		window.draw(fpsText);
 
 		window.display();
 	}
