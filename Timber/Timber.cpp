@@ -13,6 +13,9 @@ constexpr sf::Vector2f WINDOW_CENTER = { WINDOW_WIDTH_CENTER, WINDOW_HEIGHT_CENT
 constexpr sf::Vector2f WINDOW_CENTER_BOTTOM = { WINDOW_WIDTH_CENTER, WINDOW_HEIGHT };
 constexpr float OFFSCREEN_LEFT = -300.f;
 constexpr float OFFSCREEN_RIGHT = WINDOW_WIDTH + 200.f;
+
+enum Side { None, Left, Right };
+
 struct MovingEntity
 {
 
@@ -53,7 +56,7 @@ public:
 struct Bee :public MovingEntity {
 public:
 	Bee(const sf::Texture& texture) :MovingEntity(texture) {
-		sprite.setPosition({OFFSCREEN_RIGHT,sprite.getPosition().y});
+		sprite.setPosition({ OFFSCREEN_RIGHT,sprite.getPosition().y });
 	}
 protected:
 	void Spawn() override
@@ -94,7 +97,47 @@ protected:
 	}
 };
 
-void SetMessageTextLabel(sf::Text& messageText,std::string text,sf::Color color ) {
+struct Branch : public MovingEntity {
+private:
+	Side side = Side::None;
+	int id;
+protected:
+	void Spawn() override
+	{
+		float height = 150*id;
+		switch (side) {
+		case Side::Left:
+			sprite.setPosition({660, height});
+			sprite.setRotation(sf::degrees(180));
+			break;
+			case Side::Right:
+				sprite.setPosition({ 1330, height });
+				sprite.setRotation(sf::degrees(0));
+				break;
+			case Side::None:
+				sprite.setPosition({ 3000, height });
+		}
+		active = true;
+	}
+	bool IsOutOfBounds() override
+	{
+		return false;
+	}
+
+	void Move(float dt) override
+	{
+	}
+public:
+	Branch(const sf::Texture& texture, int _id) :MovingEntity(texture) {
+		id = _id;
+		side = (Side)((id % 2) +1);
+		sprite.setPosition({-2000,-2000 });
+		sf::FloatRect rect = sprite.getLocalBounds();
+		sprite.setOrigin(rect.getCenter());
+	}
+};
+
+void SetMessageTextLabel(sf::Text& messageText, std::string text, sf::Color color) {
 	sf::FloatRect textRect = messageText.getLocalBounds();
 	messageText.setString(text);
 	messageText.setFillColor(color);
@@ -103,11 +146,11 @@ void SetMessageTextLabel(sf::Text& messageText,std::string text,sf::Color color 
 	messageText.setPosition(WINDOW_CENTER);
 }
 
-void UpdateTimeBar(sf::RectangleShape& timeBar,sf::Vector2f size) {
+void UpdateTimeBar(sf::RectangleShape& timeBar, sf::Vector2f size) {
 	timeBar.setSize(size);
 	sf::FloatRect timeBarRect = timeBar.getLocalBounds();
 	timeBar.setOrigin(timeBarRect.getCenter());
-	timeBar.setPosition({ WINDOW_WIDTH_CENTER, WINDOW_HEIGHT - (timeBar.getSize().y + 5)});
+	timeBar.setPosition({ WINDOW_WIDTH_CENTER, WINDOW_HEIGHT - (timeBar.getSize().y + 5) });
 }
 
 int main()
@@ -151,18 +194,27 @@ int main()
 	if (!cloudTexture.loadFromFile("assets/graphics/cloud.png")) {
 		return -1;
 	}
+	sf::Texture branchTexture;
+	if (!branchTexture.loadFromFile("assets/graphics/branch.png")) {
+		return -1;
+	}
 
-	Bee bee(beeTexture);
-	Cloud cloud1(cloudTexture);
-	Cloud cloud2(cloudTexture);
-	Cloud cloud3(cloudTexture);
-	std::vector<MovingEntity*> entities =
+	std::vector<std::unique_ptr<MovingEntity>> entities;
+
+	// Bee
+	entities.emplace_back(std::make_unique<Bee>(beeTexture));
+
+	// Clouds
+	entities.emplace_back(std::make_unique<Cloud>(cloudTexture));
+	entities.emplace_back(std::make_unique<Cloud>(cloudTexture));
+	entities.emplace_back(std::make_unique<Cloud>(cloudTexture));
+
+	// Branches
+	const int NUM_BRANCHES = 6;
+	for (int i = 0; i < NUM_BRANCHES; i++)
 	{
-		&bee,
-		&cloud1,
-		&cloud2,
-		&cloud3
-	};
+		entities.emplace_back(std::make_unique<Branch>(branchTexture, i+1));
+	}
 
 	sf::Clock clock;
 	sf::RectangleShape timeBar;
@@ -170,11 +222,6 @@ int main()
 	float timeBarHeight = 80.0f;
 	timeBar.setFillColor(sf::Color::Red);
 	UpdateTimeBar(timeBar, { timeBarStartwidth, timeBarHeight });
-	/*
-	timeBar.setSize({ timeBarStartwidth, timeBarHeight });
-	sf::FloatRect timeBarRect = timeBar.getLocalBounds();
-	timeBar.setOrigin(timeBarRect.getCenter());
-	timeBar.setPosition({ WINDOW_WIDTH_CENTER, WINDOW_HEIGHT - (timeBarHeight + 5) });*/
 
 	sf::Time gameTimeTotal;
 	float timeRemaining = 6.0f;
@@ -234,7 +281,7 @@ int main()
 				isPaused = true;
 				SetMessageTextLabel(messageText, "Out Of Time !", (sf::Color::Red));
 			}
-			for (auto* entity : entities)
+			for (auto& entity : entities)
 			{
 				entity->Update(dt);
 			}
@@ -248,7 +295,7 @@ int main()
 
 		window.draw(background);
 		window.draw(treeSprite);
-		for (auto* entity : entities)
+		for (auto& entity : entities)
 		{
 			window.draw(entity->GetSprite());
 		}
