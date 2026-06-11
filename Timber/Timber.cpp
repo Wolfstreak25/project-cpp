@@ -3,13 +3,19 @@
 #include <vector>
 #include <cstdlib>
 #include <ctime>
+#include <sstream>
+
 constexpr unsigned int WINDOW_WIDTH = 1920;
 constexpr unsigned int WINDOW_HEIGHT = 1080;
-constexpr float OFFSCREEN_LEFT = -200.f;
+constexpr unsigned int WINDOW_WIDTH_CENTER = 960;
+constexpr unsigned int WINDOW_HEIGHT_CENTER = 540;
+constexpr sf::Vector2f WINDOW_CENTER = { WINDOW_WIDTH_CENTER, WINDOW_HEIGHT_CENTER };
+constexpr sf::Vector2f WINDOW_CENTER_BOTTOM = { WINDOW_WIDTH_CENTER, WINDOW_HEIGHT };
+constexpr float OFFSCREEN_LEFT = -300.f;
 constexpr float OFFSCREEN_RIGHT = WINDOW_WIDTH + 200.f;
 struct MovingEntity
 {
-	
+
 	virtual ~MovingEntity() = default;
 protected:
 	sf::Sprite sprite;
@@ -47,6 +53,7 @@ public:
 struct Bee :public MovingEntity {
 public:
 	Bee(const sf::Texture& texture) :MovingEntity(texture) {
+		sprite.setPosition({OFFSCREEN_RIGHT,sprite.getPosition().y});
 	}
 protected:
 	void Spawn() override
@@ -65,33 +72,51 @@ protected:
 };
 
 struct Cloud : public MovingEntity {
-private :
+private:
 	float scaleFactor = 0;
-public :
+public:
 	Cloud(const sf::Texture& texture) :MovingEntity(texture) {
+		sprite.setPosition({ OFFSCREEN_LEFT,sprite.getPosition().y });
 	}
 protected:
 	void Spawn() override
 	{
-		float height = (rand() % 450 );
-		sprite.setPosition({OFFSCREEN_LEFT,height });
-		speed = (rand() % 150 )+50 ;
+		float height = (rand() % 450);
+		sprite.setPosition({ OFFSCREEN_LEFT,height });
+		speed = (rand() % 150) + 50;
 		active = true;
 	}
 	bool IsOutOfBounds() override {
 		return (sprite.getPosition().x > WINDOW_WIDTH);
 	}
-	void Move(float dt) override{
+	void Move(float dt) override {
 		sprite.move({ speed * dt, 0.f });
 	}
 };
+
+void SetMessageTextLabel(sf::Text& messageText,std::string text,sf::Color color ) {
+	sf::FloatRect textRect = messageText.getLocalBounds();
+	messageText.setString(text);
+	messageText.setFillColor(color);
+	textRect = messageText.getLocalBounds();
+	messageText.setOrigin(textRect.getCenter());
+	messageText.setPosition(WINDOW_CENTER);
+}
+
+void UpdateTimeBar(sf::RectangleShape& timeBar,sf::Vector2f size) {
+	timeBar.setSize(size);
+	sf::FloatRect timeBarRect = timeBar.getLocalBounds();
+	timeBar.setOrigin(timeBarRect.getCenter());
+	timeBar.setPosition({ WINDOW_WIDTH_CENTER, WINDOW_HEIGHT - (timeBar.getSize().y + 5)});
+}
 
 int main()
 {
 	// Initialization
 	std::cout << "[LOG] Application Started" << std::endl;
+	bool isPaused = true;
+	int score = 0;
 	srand(static_cast<unsigned>(time(nullptr)));
-
 
 	sf::RenderWindow window(
 		sf::VideoMode({ WINDOW_WIDTH, WINDOW_HEIGHT }),
@@ -138,7 +163,32 @@ int main()
 		&cloud2,
 		&cloud3
 	};
+
 	sf::Clock clock;
+	sf::RectangleShape timeBar;
+	float timeBarStartwidth = 400.0f;
+	float timeBarHeight = 80.0f;
+	timeBar.setFillColor(sf::Color::Red);
+	UpdateTimeBar(timeBar, { timeBarStartwidth, timeBarHeight });
+	/*
+	timeBar.setSize({ timeBarStartwidth, timeBarHeight });
+	sf::FloatRect timeBarRect = timeBar.getLocalBounds();
+	timeBar.setOrigin(timeBarRect.getCenter());
+	timeBar.setPosition({ WINDOW_WIDTH_CENTER, WINDOW_HEIGHT - (timeBarHeight + 5) });*/
+
+	sf::Time gameTimeTotal;
+	float timeRemaining = 6.0f;
+	float timeBarwidthPerSecond = timeBarStartwidth / timeRemaining;
+
+	sf::Font font;
+	if (!font.openFromFile("assets/fonts/KOMIKAP_.ttf")) {
+		return -1;
+	}
+	sf::Text scoreText(font, "Score : " + score, 30);
+	sf::Text messageText(font, "Press [ ENTER ] to start", 50);
+	SetMessageTextLabel(messageText, "Press [ ENTER ] to start", (sf::Color::White));
+	scoreText.setFillColor(sf::Color::White);
+	scoreText.setPosition({ 20, 20 });
 
 	// Game Loop
 	while (window.isOpen())
@@ -156,19 +206,42 @@ int main()
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Escape))
 		{
 			std::cout << "[INPUT] Escape Pressed" << std::endl;
-			window.close();
+			if (isPaused) {
+				window.close();
+			}
+			else {
+				isPaused = true;
+				SetMessageTextLabel(messageText, "PAUSED!", (sf::Color::Yellow));
+			}
 		}
-
-
-		// Update
-		// Measure time
-		const float dt = clock.restart().asSeconds();
-
-		for (auto* entity : entities)
+		// Start the game
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Enter))
 		{
-			entity->Update(dt);
+			isPaused = false;
+			// Reset the time and the score
+			score = 0;
+			timeRemaining = 6;
 		}
 
+		if (!isPaused) {
+			// Update
+			// Measure time
+			const float dt = clock.restart().asSeconds();
+			timeRemaining -= dt;
+			UpdateTimeBar(timeBar, { timeBarwidthPerSecond * timeRemaining, timeBarHeight });
+
+			if (timeRemaining <= 0.0f) {
+				isPaused = true;
+				SetMessageTextLabel(messageText, "Out Of Time !", (sf::Color::Red));
+			}
+			for (auto* entity : entities)
+			{
+				entity->Update(dt);
+			}
+			std::stringstream ss;
+			ss << "Score : " << score;
+			scoreText.setString(ss.str());
+		}
 
 		// Render
 		window.clear();
@@ -179,6 +252,13 @@ int main()
 		{
 			window.draw(entity->GetSprite());
 		}
+		window.draw(scoreText);
+		if (isPaused)
+		{
+			// Draw our message
+			window.draw(messageText);
+		}
+		window.draw(timeBar);
 
 		window.display();
 	}
