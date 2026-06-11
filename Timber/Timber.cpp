@@ -97,43 +97,62 @@ protected:
 	}
 };
 
-struct Branch : public MovingEntity {
+struct Branch {
 private:
 	Side side = Side::None;
+	sf::Sprite sprite;
+	float speed = 0.0f;
+	bool active = false;
 	int id;
+
+	void SetSide() {
+		int rot = (rand() % 2) + 1;
+		side = (Side)rot;
+	}
 protected:
-	void Spawn() override
+	void Spawn()
 	{
-		float height = 150*id;
+		float height = 150 * id;
 		switch (side) {
 		case Side::Left:
-			sprite.setPosition({660, height});
+			sprite.setPosition({ 660, height });
 			sprite.setRotation(sf::degrees(180));
 			break;
-			case Side::Right:
-				sprite.setPosition({ 1330, height });
-				sprite.setRotation(sf::degrees(0));
-				break;
-			case Side::None:
-				sprite.setPosition({ 3000, height });
+		case Side::Right:
+			sprite.setPosition({ 1330, height });
+			sprite.setRotation(sf::degrees(0));
+			break;
+		case Side::None:
+			sprite.setPosition({ 3000, height });
 		}
 		active = true;
 	}
-	bool IsOutOfBounds() override
-	{
-		return false;
-	}
 
-	void Move(float dt) override
-	{
-	}
+
 public:
-	Branch(const sf::Texture& texture, int _id) :MovingEntity(texture) {
-		id = _id;
-		side = (Side)((id % 2) +1);
-		sprite.setPosition({-2000,-2000 });
+	Branch(const sf::Texture& texture) :sprite(texture) {
+		side = (Side)((id % 2) + 1);
+		sprite.setPosition({ -2000,-2000 });
 		sf::FloatRect rect = sprite.getLocalBounds();
 		sprite.setOrigin(rect.getCenter());
+	}
+
+	void Update(int _id) {
+		if (!active) {
+			id = _id;
+			SetSide();
+			Spawn();
+		}
+	}
+	void ShiftDown(sf::Vector2f _newPos) {
+		if (id == 0) {
+			active = false;
+			Update(5);
+		}
+	}
+	const sf::Sprite& GetSprite() const
+	{
+		return sprite;
 	}
 };
 
@@ -210,10 +229,11 @@ int main()
 	entities.emplace_back(std::make_unique<Cloud>(cloudTexture));
 
 	// Branches
+	std::vector<std::unique_ptr<Branch>> branches;
 	const int NUM_BRANCHES = 6;
 	for (int i = 0; i < NUM_BRANCHES; i++)
 	{
-		entities.emplace_back(std::make_unique<Branch>(branchTexture, i+1));
+		branches.emplace_back(std::make_unique<Branch>(branchTexture));
 	}
 
 	sf::Clock clock;
@@ -285,6 +305,10 @@ int main()
 			{
 				entity->Update(dt);
 			}
+			for (int i = 0;i<branches.size(); i++)
+			{
+				branches[i]->Update(i);
+			}
 			std::stringstream ss;
 			ss << "Score : " << score;
 			scoreText.setString(ss.str());
@@ -298,6 +322,10 @@ int main()
 		for (auto& entity : entities)
 		{
 			window.draw(entity->GetSprite());
+		}
+		for (auto& branch : branches)
+		{
+			window.draw(branch->GetSprite());
 		}
 		window.draw(scoreText);
 		if (isPaused)
