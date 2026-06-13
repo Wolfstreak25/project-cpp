@@ -138,4 +138,9 @@
       <Filter>Engine\Utilities</Filter>
     </ClInclude>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Utilities\Logger.inl">
+      <Filter>Engine\Utilities</Filter>
+    </None>
+  </ItemGroup>
 </Project>

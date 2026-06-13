@@ -5,6 +5,11 @@
 #include <cstdlib>
 #include <ctime>
 #include <sstream>
+#include "Utilities/Logger.hpp"
+#include "Resources/TextureManager.hpp"
+#include "Math/Random.hpp"
+#include "Resources/AudioManager.hpp"
+
 
 constexpr unsigned int WINDOW_WIDTH = 1920;
 constexpr unsigned int WINDOW_HEIGHT = 1080;
@@ -62,9 +67,9 @@ public:
 protected:
 	void Spawn() override
 	{
-		float height = (rand() % 500 + 500);
+		float height = (Engine::Random::IntRange(500, 1000));
 		sprite.setPosition({ OFFSCREEN_RIGHT,height });
-		speed = (rand() % 200) + 200;
+		speed = Engine::Random::IntRange(200, 400);
 		active = true;
 	}
 	bool IsOutOfBounds() override {
@@ -85,9 +90,9 @@ public:
 protected:
 	void Spawn() override
 	{
-		float height = (rand() % 450);
+		float height = (Engine::Random::IntRange(0, 450));
 		sprite.setPosition({ OFFSCREEN_LEFT,height });
-		speed = (rand() % 150) + 50;
+		speed = Engine::Random::IntRange(50, 200);
 		active = true;
 	}
 	bool IsOutOfBounds() override {
@@ -106,7 +111,7 @@ private:
 	int id = 0;
 
 	void SetSide() {
-		int rot = (rand() % 5);
+		int rot = (Engine::Random::IntRange(0, 5));
 		float height = (150 * id) + 50;
 		switch (rot) {
 		case 0:
@@ -231,8 +236,11 @@ void UpdateBranch(std::vector<std::unique_ptr<Branch>>& branches) {
 int main()
 {
 	// Initialization
-	std::cout << "[LOG] Application Started" << std::endl;
+	//std::cout << "[LOG] Application Started" << std::endl;
+	Engine::TextureManager textureManager;
+	Engine::AudioManager audioManager;
 	bool acceptInput = false;
+	Engine::Logger::Error("Application Started", "false");
 	int score = 0;
 	GameState currentState = GameState::PAUSED;
 	srand(static_cast<unsigned>(time(nullptr)));
@@ -242,14 +250,14 @@ int main()
 		"Timber!"
 	);
 
-	sf::Texture backgroundTexture;
+	//sf::Texture backgroundTexture;
 
-	if (!backgroundTexture.loadFromFile("assets/graphics/background.png"))
+	if (!textureManager.Load("assets/graphics/background.png"))
 	{
 		return -1;
 	}
 
-	sf::Sprite background(backgroundTexture);
+	sf::Sprite background(textureManager.Get("assets/graphics/background.png"));
 	background.setPosition({ 0.f, 0.f });
 
 	// load tree texture
@@ -327,23 +335,9 @@ int main()
 	const float AXE_POS_LEFT = 700.0f;
 	const float AXE_POS_RIGHT = 1075.0f;
 
-	sf::SoundBuffer chopBuffer;
-	if (!chopBuffer.loadFromFile("assets/sound/chop.wav")) {
-
-	}
-	sf::Sound chopSound(chopBuffer);
-
-	sf::SoundBuffer deathBuffer;
-	if (!deathBuffer.loadFromFile("assets/sound/death.wav")) {
-
-	}
-	sf::Sound deathSound(deathBuffer);
-
-	sf::SoundBuffer timeOutBuffer;
-	if (!timeOutBuffer.loadFromFile("assets/sound/out_of_time.wav")) {
-
-	}
-	sf::Sound timeOutSound(timeOutBuffer);
+	audioManager.LoadSound("assets/sound/chop.wav");
+	audioManager.LoadSound("assets/sound/death.wav");
+	audioManager.LoadSound("assets/sound/out_of_time.wav");
 
 
 	sf::Clock clock;
@@ -428,7 +422,7 @@ int main()
 				axeSprite.setPosition({ AXE_POS_RIGHT, axeSprite.getPosition().y });
 				playerSprite.setPosition({ 1200,720 });
 
-				chopSound.play();
+				audioManager.PlaySound("assets/sound/chop.wav");
 				score++;
 				timeRemaining += (2.0f / score) + 0.15f;
 
@@ -436,7 +430,6 @@ int main()
 
 				if (branches.back()->GetSide() == playerSide)
 				{
-					deathSound.play();
 					currentState = GameState::GAMEOVER;
 					SetMessageTextLabel(messageText,
 						"SQUISHED!!",
@@ -444,6 +437,7 @@ int main()
 
 					ripSprite.setPosition(playerSprite.getPosition());
 					playerSprite.setPosition({ 2000,660 });
+					audioManager.PlaySound("assets/sound/death.wav");
 				}
 
 				logSprite.setPosition({ 810,720 });
@@ -453,7 +447,8 @@ int main()
 
 			}
 			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Left)) {
-				chopSound.play();
+				audioManager.PlaySound("assets/sound/chop.wav");
+
 				playerSide = Side::Left;
 				score++;
 				timeRemaining += (2.0f / score) + 0.15f;
@@ -464,7 +459,6 @@ int main()
 
 				if (branches.back()->GetSide() == playerSide)
 				{
-					deathSound.play();
 					currentState = GameState::GAMEOVER;
 					SetMessageTextLabel(messageText,
 						"SQUISHED!!",
@@ -472,6 +466,7 @@ int main()
 
 					ripSprite.setPosition(playerSprite.getPosition());
 					playerSprite.setPosition({ 2000,660 });
+					audioManager.PlaySound("assets/sound/death.wav");
 				}
 
 				logSprite.setPosition({ 810,720 });
@@ -499,7 +494,7 @@ int main()
 			UpdateTimeBar(timeBar, { timeBarwidthPerSecond * timeRemaining, timeBarHeight });
 			if (timeRemaining <= 0.0f) {
 				currentState = GameState::GAMEOVER;
-				timeOutSound.play();
+				audioManager.PlaySound("assets/sound/out_of_time.wav");
 				SetMessageTextLabel(messageText, "Out Of Time !", sf::Color::Red);
 			}
 			for (auto& entity : entities)

@@ -60,6 +60,9 @@
     <ClCompile Include="UI\TimeBar.cpp">
       <Filter>Game\UI</Filter>
     </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Entities\Bee.hpp">

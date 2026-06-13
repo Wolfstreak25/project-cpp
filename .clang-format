@@ -1,0 +1,63 @@
+---
+BasedOnStyle Microsoft
+
+# Indentation
+IndentWidth 4
+TabWidth 4
+UseTab Never
+
+# Line Length
+ColumnLimit 120
+
+# Braces
+BreakBeforeBraces Allman
+
+BraceWrapping
+  AfterClass true
+  AfterControlStatement true
+  AfterEnum true
+  AfterFunction true
+  AfterNamespace true
+  AfterStruct true
+  AfterUnion true
+  BeforeCatch true
+  BeforeElse true
+
+# Functions
+AllowShortFunctionsOnASingleLine Empty
+AllowShortBlocksOnASingleLine Never
+AllowShortIfStatementsOnASingleLine Never
+AllowShortLoopsOnASingleLine Never
+
+# Classes
+AccessModifierOffset -4
+EmptyLineBeforeAccessModifier LogicalBlock
+
+# Pointers  References
+PointerAlignment Left
+ReferenceAlignment Left
+
+# Includes
+SortIncludes true
+IncludeBlocks Preserve
+
+# Spaces
+SpaceBeforeParens ControlStatements
+SpacesInParentheses false
+
+# C++
+Standard Latest
+
+# Constructor Initializers
+BreakConstructorInitializers BeforeComma
+PackConstructorInitializers Never
+
+# Namespace
+CompactNamespaces false
+
+# Switch
+IndentCaseLabels true
+
+# Empty Lines
+KeepEmptyLinesAtTheStartOfBlocks false
+MaxEmptyLinesToKeep 1

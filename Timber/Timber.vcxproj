@@ -136,6 +136,7 @@
     <ClCompile Include="Entities\Branch.cpp" />
     <ClCompile Include="Entities\Cloud.cpp" />
     <ClCompile Include="Entities\Player.cpp" />
+    <ClCompile Include="main.cpp" />
     <ClCompile Include="Systems\BranchSystem.cpp" />
     <ClCompile Include="Systems\ScoreSystem.cpp" />
     <ClCompile Include="Systems\TimeSystem.cpp" />
@@ -154,6 +155,11 @@
     <ClInclude Include="Systems\TimeSystem.hpp" />
     <ClInclude Include="UI\HUD.hpp" />
     <ClInclude Include="UI\TimeBar.hpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Engine\Engine.vcxproj">
+      <Project>{159af667-d08e-4ae3-a848-4d0443310f67}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
