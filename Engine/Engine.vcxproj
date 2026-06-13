@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -21,8 +21,8 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{c4f651d7-0b3d-4f78-97b5-3f6e33808d92}</ProjectGuid>
-    <RootNamespace>Timber</RootNamespace>
+    <ProjectGuid>{159af667-d08e-4ae3-a848-4d0443310f67}</ProjectGuid>
+    <RootNamespace>Engine</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -76,14 +76,13 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\SFML\include;D:\Work\VR\DevCPP\project-cpp\Engine;D:\Work\VR\DevCPP\project-cpp\Timber;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
+      <AdditionalIncludeDirectories>D:\Work\VR\DevCPP\project-cpp\Engine;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\SFML\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>$(CoreLibraryDependencies);%(AdditionalDependencies);sfml-graphics-d.lib;sfml-window-d.lib;sfml-system-d.lib;sfml-network-d.lib;sfml-audio-d.lib;</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\SFML\lib</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -94,13 +93,13 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\SFML\include;D:\Work\VR\DevCPP\project-cpp\Engine;D:\Work\VR\DevCPP\project-cpp\Timber;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
+      <AdditionalIncludeDirectories>D:\Work\VR\DevCPP\project-cpp\Engine;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\SFML\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\SFML\lib</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -109,7 +108,6 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\SFML;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -124,7 +122,6 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\SFML;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -132,28 +129,38 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Entities\Bee.cpp" />
-    <ClCompile Include="Entities\Branch.cpp" />
-    <ClCompile Include="Entities\Cloud.cpp" />
-    <ClCompile Include="Entities\Player.cpp" />
-    <ClCompile Include="Systems\BranchSystem.cpp" />
-    <ClCompile Include="Systems\ScoreSystem.cpp" />
-    <ClCompile Include="Systems\TimeSystem.cpp" />
-    <ClCompile Include="Timber.cpp" />
-    <ClCompile Include="UI\HUD.cpp" />
-    <ClCompile Include="UI\TimeBar.cpp" />
+    <ClCompile Include="Core\Application.cpp" />
+    <ClCompile Include="Core\GameClock.cpp" />
+    <ClCompile Include="Core\Window.cpp" />
+    <ClCompile Include="Entity\MovingEntity.cpp" />
+    <ClCompile Include="Events\EventBus.cpp" />
+    <ClCompile Include="Input\InputManager.cpp" />
+    <ClCompile Include="Math\Random.cpp" />
+    <ClCompile Include="Resources\AudioManager.cpp" />
+    <ClCompile Include="Resources\FontManager.cpp" />
+    <ClCompile Include="Resources\TextureManager.cpp" />
+    <ClCompile Include="State\StateMachine.cpp" />
+    <ClCompile Include="Utilities\Logger.cpp" />
+    <ClCompile Include="Utilities\Timer.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Config\Constants.hpp" />
-    <ClInclude Include="Entities\Bee.hpp" />
-    <ClInclude Include="Entities\Branch.hpp" />
-    <ClInclude Include="Entities\Cloud.hpp" />
-    <ClInclude Include="Entities\Player.hpp" />
-    <ClInclude Include="Systems\BranchSystem.hpp" />
-    <ClInclude Include="Systems\ScoreSystem.hpp" />
-    <ClInclude Include="Systems\TimeSystem.hpp" />
-    <ClInclude Include="UI\HUD.hpp" />
-    <ClInclude Include="UI\TimeBar.hpp" />
+    <ClInclude Include="Core\Application.hpp" />
+    <ClInclude Include="Core\GameClock.hpp" />
+    <ClInclude Include="Core\Window.hpp" />
+    <ClInclude Include="Entity\Entity.hpp" />
+    <ClInclude Include="Entity\MovingEntity.hpp" />
+    <ClInclude Include="Events\EventBus.hpp" />
+    <ClInclude Include="Events\EventTypes.hpp" />
+    <ClInclude Include="Input\Command.hpp" />
+    <ClInclude Include="Input\InputManager.hpp" />
+    <ClInclude Include="Math\Random.hpp" />
+    <ClInclude Include="Resources\AudioManager.hpp" />
+    <ClInclude Include="Resources\FontManager.hpp" />
+    <ClInclude Include="Resources\TextureManager.hpp" />
+    <ClInclude Include="State\State.hpp" />
+    <ClInclude Include="State\StateMachine.hpp" />
+    <ClInclude Include="Utilities\Logger.hpp" />
+    <ClInclude Include="Utilities\Timer.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

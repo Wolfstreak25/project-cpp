@@ -13,10 +13,84 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Game">
+      <UniqueIdentifier>{7d11f92d-d3da-42ad-ad20-b3490d80b1ca}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Entities">
+      <UniqueIdentifier>{fe508578-6c13-4dd0-968c-1e3b7b9716bc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Systems">
+      <UniqueIdentifier>{807d3f61-ef15-4be8-9e0b-de8f7aa6d4fc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\UI">
+      <UniqueIdentifier>{69697292-b5ad-4c42-9c56-36082cec5079}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Config">
+      <UniqueIdentifier>{b6d67c44-47d1-45e7-9e93-4fcdc2dc14c9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Timber.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Entities\Bee.cpp">
+      <Filter>Game\Entities</Filter>
+    </ClCompile>
+    <ClCompile Include="Entities\Branch.cpp">
+      <Filter>Game\Entities</Filter>
+    </ClCompile>
+    <ClCompile Include="Entities\Cloud.cpp">
+      <Filter>Game\Entities</Filter>
+    </ClCompile>
+    <ClCompile Include="Entities\Player.cpp">
+      <Filter>Game\Entities</Filter>
+    </ClCompile>
+    <ClCompile Include="Systems\BranchSystem.cpp">
+      <Filter>Game\Systems</Filter>
+    </ClCompile>
+    <ClCompile Include="Systems\ScoreSystem.cpp">
+      <Filter>Game\Systems</Filter>
+    </ClCompile>
+    <ClCompile Include="Systems\TimeSystem.cpp">
+      <Filter>Game\Systems</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\HUD.cpp">
+      <Filter>Game\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\TimeBar.cpp">
+      <Filter>Game\UI</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Entities\Bee.hpp">
+      <Filter>Game\Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="Entities\Branch.hpp">
+      <Filter>Game\Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="Entities\Cloud.hpp">
+      <Filter>Game\Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="Entities\Player.hpp">
+      <Filter>Game\Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="Systems\BranchSystem.hpp">
+      <Filter>Game\Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="Systems\ScoreSystem.hpp">
+      <Filter>Game\Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="Systems\TimeSystem.hpp">
+      <Filter>Game\Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\HUD.hpp">
+      <Filter>Game\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\TimeBar.hpp">
+      <Filter>Game\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Config\Constants.hpp">
+      <Filter>Game\Config</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

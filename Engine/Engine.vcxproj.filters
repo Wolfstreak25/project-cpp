@@ -1,0 +1,141 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Engine">
+      <UniqueIdentifier>{900748f8-ddef-4025-a42e-87984c1c8d1d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Core">
+      <UniqueIdentifier>{a2463010-b35c-48a7-902b-4df2437b439d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Entity">
+      <UniqueIdentifier>{6f8c2478-5325-4c7f-894f-817350d7d8d9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Events">
+      <UniqueIdentifier>{17b5d521-94e1-4a36-8ac5-28182d2736a1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Input">
+      <UniqueIdentifier>{af22ac7b-f662-4c2f-ba75-875ee793d49c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Input\Commands">
+      <UniqueIdentifier>{8b0264a8-102f-4591-bd38-0639178320ea}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Math">
+      <UniqueIdentifier>{b4aa63a5-db83-47df-a6e1-608799b6ef13}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Utilities">
+      <UniqueIdentifier>{d9095233-1436-43df-a267-c69759f881f0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\State">
+      <UniqueIdentifier>{4aa77f00-67bb-46fc-8983-f999dedc7100}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Resources">
+      <UniqueIdentifier>{a62bcc09-0dc6-4671-9b67-acead391f4a5}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Core\Application.cpp">
+      <Filter>Engine\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\GameClock.cpp">
+      <Filter>Engine\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Window.cpp">
+      <Filter>Engine\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Entity\MovingEntity.cpp">
+      <Filter>Engine\Entity</Filter>
+    </ClCompile>
+    <ClCompile Include="Events\EventBus.cpp">
+      <Filter>Engine\Events</Filter>
+    </ClCompile>
+    <ClCompile Include="Input\InputManager.cpp">
+      <Filter>Engine\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="Math\Random.cpp">
+      <Filter>Engine\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Resources\AudioManager.cpp">
+      <Filter>Engine\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="Resources\FontManager.cpp">
+      <Filter>Engine\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="Resources\TextureManager.cpp">
+      <Filter>Engine\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="State\StateMachine.cpp">
+      <Filter>Engine\State</Filter>
+    </ClCompile>
+    <ClCompile Include="Utilities\Logger.cpp">
+      <Filter>Engine\Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="Utilities\Timer.cpp">
+      <Filter>Engine\Utilities</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Core\Application.hpp">
+      <Filter>Engine\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\GameClock.hpp">
+      <Filter>Engine\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Window.hpp">
+      <Filter>Engine\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Entity\Entity.hpp">
+      <Filter>Engine\Entity</Filter>
+    </ClInclude>
+    <ClInclude Include="Entity\MovingEntity.hpp">
+      <Filter>Engine\Entity</Filter>
+    </ClInclude>
+    <ClInclude Include="Events\EventBus.hpp">
+      <Filter>Engine\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="Events\EventTypes.hpp">
+      <Filter>Engine\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="Input\Command.hpp">
+      <Filter>Engine\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="Input\InputManager.hpp">
+      <Filter>Engine\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\Random.hpp">
+      <Filter>Engine\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Resources\AudioManager.hpp">
+      <Filter>Engine\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="Resources\FontManager.hpp">
+      <Filter>Engine\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="Resources\TextureManager.hpp">
+      <Filter>Engine\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="State\State.hpp">
+      <Filter>Engine\State</Filter>
+    </ClInclude>
+    <ClInclude Include="State\StateMachine.hpp">
+      <Filter>Engine\State</Filter>
+    </ClInclude>
+    <ClInclude Include="Utilities\Logger.hpp">
+      <Filter>Engine\Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="Utilities\Timer.hpp">
+      <Filter>Engine\Utilities</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
