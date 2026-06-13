@@ -1,4 +1,5 @@
 #include <SFML/Graphics.hpp>
+#include<SFML/Audio.hpp>
 #include <iostream>
 #include <vector>
 #include <cstdlib>
@@ -33,7 +34,6 @@ protected:
 public:
 	MovingEntity(const sf::Texture& texture) :sprite(texture) {
 	}
-
 	void Update(float dt) {
 		if (!active) {
 			Spawn();
@@ -103,57 +103,81 @@ private:
 	Side side = Side::None;
 	sf::Sprite sprite;
 	float speed = 0.0f;
-	bool active = false;
-	int id;
+	int id = 0;
 
 	void SetSide() {
-		int rot = (rand() % 2) + 1;
-		side = (Side)rot;
-	}
-protected:
-	void Spawn()
-	{
-		float height = 150 * id;
-		switch (side) {
-		case Side::Left:
-			sprite.setPosition({ 660, height });
+		int rot = (rand() % 5);
+		float height = (150 * id) + 50;
+		switch (rot) {
+		case 0:
+			side = Side::Left;
 			sprite.setRotation(sf::degrees(180));
+			sprite.setPosition({ 660, height });
 			break;
-		case Side::Right:
-			sprite.setPosition({ 1330, height });
+		case 1:
+			side = Side::Right;
 			sprite.setRotation(sf::degrees(0));
+			sprite.setPosition({ 1330, height });
 			break;
-		case Side::None:
+		default:
+			side = Side::None;
 			sprite.setPosition({ 3000, height });
 		}
-		active = true;
 	}
-
-
 public:
-	Branch(const sf::Texture& texture) :sprite(texture) {
-		side = (Side)((id % 2) + 1);
-		sprite.setPosition({ -2000,-2000 });
+	Branch(const sf::Texture& texture, int _id) :sprite(texture) {
+		id = _id;
 		sf::FloatRect rect = sprite.getLocalBounds();
 		sprite.setOrigin(rect.getCenter());
+		SetSide();
+	}
+	void ShiftDown(sf::Vector2f _newPos, Side _side) {
+		SetSide(_side);
+		sprite.setPosition(_newPos);
+	}
+	void ShiftDown(sf::Vector2f pos) {
+		SetSide();
+		sprite.setPosition({ sprite.getPosition().x,pos.y });
 	}
 
-	void Update(int _id) {
-		if (!active) {
-			id = _id;
-			SetSide();
-			Spawn();
-		}
-	}
-	void ShiftDown(sf::Vector2f _newPos) {
-		if (id == 0) {
-			active = false;
-			Update(5);
-		}
-	}
 	const sf::Sprite& GetSprite() const
 	{
 		return sprite;
+	}
+
+	const Side GetSide() const
+	{
+		return side;
+	}
+
+	void SetSide(Side s)
+	{
+		side = s;
+		float height = (150 * id) + 50;
+
+		if (side == Side::Left)
+		{
+			sprite.setPosition({ 660, height });
+			sprite.setRotation(sf::degrees(180));
+		}
+		else if (side == Side::Right)
+		{
+			sprite.setPosition({ 1330, height });
+			sprite.setRotation(sf::degrees(0));
+		}
+		else
+		{
+			sprite.setPosition({ 3000, height });
+		}
+	}
+
+	void ResetBranch() {
+		side = Side::None;
+		float height = (150 * id) + 50;
+		sprite.setPosition({ 3000, height });
+	}
+	void SetBranch() {
+		SetSide();
 	}
 };
 
@@ -188,11 +212,27 @@ float UpdateFPS(float dt) {
 	return currentFPS;
 }
 
+void UpdateBranch(std::vector<std::unique_ptr<Branch>>& branches) {
+
+	std::vector<Side> oldSides;
+	for (auto& branch : branches) {
+		oldSides.push_back(branch->GetSide());
+	}
+
+	// Shift sides DOWN: each branch takes the side of the one ABOVE it
+	for (int i = static_cast<int>(branches.size()) - 1; i > 0; i--) {
+		branches[i]->SetSide(oldSides[i - 1]);
+	}
+
+	// Top branch (index 0) gets a new random side
+	branches[0]->SetBranch();
+}
+
 int main()
 {
 	// Initialization
 	std::cout << "[LOG] Application Started" << std::endl;
-	//bool isPaused = true;
+	bool acceptInput = false;
 	int score = 0;
 	GameState currentState = GameState::PAUSED;
 	srand(static_cast<unsigned>(time(nullptr)));
@@ -250,8 +290,61 @@ int main()
 	const int NUM_BRANCHES = 6;
 	for (int i = 0; i < NUM_BRANCHES; i++)
 	{
-		branches.emplace_back(std::make_unique<Branch>(branchTexture));
+		branches.emplace_back(std::make_unique<Branch>(branchTexture, i));
 	}
+	std::cout << "Branches : " << branches.size() << std::endl;
+
+	sf::Texture playerTexture;
+	if (!playerTexture.loadFromFile("assets/graphics/player.png")) {
+		return -1;
+	}
+	sf::Sprite playerSprite(playerTexture);
+	Side playerSide = Side::Left;
+	playerSprite.setPosition({ 580, 720 });
+
+	sf::Texture logTexture;
+	if (!logTexture.loadFromFile("assets/graphics/log.png")) {
+		return -1;
+	}
+	sf::Sprite logSprite(logTexture);
+	float logSpeedX = 1000.0f;
+	float logSpeedY = -1500.0f;
+	bool isLogActive = false;
+
+	sf::Texture ripTexture;
+	if (!ripTexture.loadFromFile("assets/graphics/rip.png")) {
+		return -1;
+	}
+	sf::Sprite ripSprite(ripTexture);
+	ripSprite.setPosition({ 600, 860 });
+
+	sf::Texture axeTexture;
+	if (!axeTexture.loadFromFile("assets/graphics/axe.png")) {
+		return -1;
+	}
+	sf::Sprite axeSprite(axeTexture);
+	axeSprite.setPosition({ 700, 830 });
+	const float AXE_POS_LEFT = 700.0f;
+	const float AXE_POS_RIGHT = 1075.0f;
+
+	sf::SoundBuffer chopBuffer;
+	if (!chopBuffer.loadFromFile("assets/sound/chop.wav")) {
+
+	}
+	sf::Sound chopSound(chopBuffer);
+
+	sf::SoundBuffer deathBuffer;
+	if (!deathBuffer.loadFromFile("assets/sound/death.wav")) {
+
+	}
+	sf::Sound deathSound(deathBuffer);
+
+	sf::SoundBuffer timeOutBuffer;
+	if (!timeOutBuffer.loadFromFile("assets/sound/out_of_time.wav")) {
+
+	}
+	sf::Sound timeOutSound(timeOutBuffer);
+
 
 	sf::Clock clock;
 	sf::RectangleShape timeBar;
@@ -261,7 +354,7 @@ int main()
 	UpdateTimeBar(timeBar, { timeBarStartwidth, timeBarHeight });
 
 	sf::Time gameTimeTotal;
-	float timeRemaining = 6.0f;
+	float timeRemaining = 2006.0f;
 	float timeBarwidthPerSecond = timeBarStartwidth / timeRemaining;
 
 	sf::Font font;
@@ -283,16 +376,21 @@ int main()
 
 		while (const auto event = window.pollEvent())
 		{
+			if (event->is<sf::Event::KeyReleased>() && (currentState == GameState::PLAYING)) {
+				acceptInput = true;
+				axeSprite.setPosition({ 2000, axeSprite.getPosition().y });
+			}
 			if (event->is<sf::Event::Closed>())
 			{
 				window.close();
 			}
 		}
 
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Escape))
+		if (acceptInput && sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Escape))
 		{
+			acceptInput = false;
 			std::cout << "[INPUT] Escape Pressed" << std::endl;
-			if (currentState == GameState::PAUSED) {
+			if (currentState != GameState::PLAYING) {
 				currentState = GameState::GAMEOVER;
 				window.close();
 			}
@@ -306,9 +404,83 @@ int main()
 		{
 			currentState = GameState::PLAYING;
 			// Reset the time and the score
+			std::cout
+				<< "Bottom branch = "
+				<< (int)branches.back()->GetSide()
+				<< std::endl;
 			score = 0;
 			timeRemaining = 6;
+			timeBarwidthPerSecond = timeBarStartwidth / timeRemaining;
+			ripSprite.setPosition({ ripSprite.getPosition().x, 2000 });
+			acceptInput = true;
+			playerSide = Side::Left;
+			playerSprite.setPosition({ 580, 660 });
+			axeSprite.setPosition({ 700, 830 });
+
+			for (auto& branch : branches) {
+				branch->ResetBranch();
+			}
 		}
+
+		if (acceptInput && currentState == GameState::PLAYING) {
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Right)) {
+				playerSide = Side::Right;
+				axeSprite.setPosition({ AXE_POS_RIGHT, axeSprite.getPosition().y });
+				playerSprite.setPosition({ 1200,720 });
+
+				chopSound.play();
+				score++;
+				timeRemaining += (2.0f / score) + 0.15f;
+
+				UpdateBranch(branches);
+
+				if (branches.back()->GetSide() == playerSide)
+				{
+					deathSound.play();
+					currentState = GameState::GAMEOVER;
+					SetMessageTextLabel(messageText,
+						"SQUISHED!!",
+						sf::Color::Red);
+
+					ripSprite.setPosition(playerSprite.getPosition());
+					playerSprite.setPosition({ 2000,660 });
+				}
+
+				logSprite.setPosition({ 810,720 });
+				logSpeedX = -5000;
+				isLogActive = true;
+				acceptInput = false;
+
+			}
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Left)) {
+				chopSound.play();
+				playerSide = Side::Left;
+				score++;
+				timeRemaining += (2.0f / score) + 0.15f;
+				axeSprite.setPosition({ AXE_POS_LEFT, axeSprite.getPosition().y });
+				playerSprite.setPosition({ 580,720 });
+
+				UpdateBranch(branches);
+
+				if (branches.back()->GetSide() == playerSide)
+				{
+					deathSound.play();
+					currentState = GameState::GAMEOVER;
+					SetMessageTextLabel(messageText,
+						"SQUISHED!!",
+						sf::Color::Red);
+
+					ripSprite.setPosition(playerSprite.getPosition());
+					playerSprite.setPosition({ 2000,660 });
+				}
+
+				logSprite.setPosition({ 810,720 });
+				logSpeedX = 5000;
+				isLogActive = true;
+				acceptInput = false;
+			}
+		}
+
 
 		if (currentState == GameState::PLAYING) {
 			// Update
@@ -316,19 +488,25 @@ int main()
 			const float dt = clock.restart().asSeconds();
 			timeRemaining -= dt;
 			UpdateTimeBar(timeBar, { timeBarwidthPerSecond * timeRemaining, timeBarHeight });
+			if (isLogActive) {
+				logSprite.setPosition({ logSprite.getPosition().x + (logSpeedX * dt),logSprite.getPosition().y + (logSpeedY * dt) });
+				if (logSprite.getPosition().x < -100 || logSprite.getPosition().x > 2000) {
+					isLogActive = false;
+					logSprite.setPosition({ 810,720 });
+				}
+			}
 
+			UpdateTimeBar(timeBar, { timeBarwidthPerSecond * timeRemaining, timeBarHeight });
 			if (timeRemaining <= 0.0f) {
 				currentState = GameState::GAMEOVER;
-				SetMessageTextLabel(messageText, "Out Of Time !", (sf::Color::Red));
+				timeOutSound.play();
+				SetMessageTextLabel(messageText, "Out Of Time !", sf::Color::Red);
 			}
 			for (auto& entity : entities)
 			{
 				entity->Update(dt);
 			}
-			for (int i = 0; i < branches.size(); i++)
-			{
-				branches[i]->Update(i);
-			}
+
 			std::stringstream ss;
 			ss << "Score : " << score;
 			scoreText.setString(ss.str());
@@ -339,7 +517,6 @@ int main()
 		else {
 			clock.restart();
 		}
-
 		// Render
 		window.clear();
 
@@ -359,6 +536,12 @@ int main()
 			// Draw our message
 			window.draw(messageText);
 		}
+		window.draw(playerSprite);
+		window.draw(axeSprite);
+		if (currentState == GameState::GAMEOVER) {
+			window.draw(ripSprite);
+		}
+		window.draw(logSprite);
 		window.draw(timeBar);
 		window.draw(fpsText);
 
