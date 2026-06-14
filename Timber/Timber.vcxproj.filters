@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Filter Include="Source Files">
@@ -28,11 +28,11 @@
     <Filter Include="Game\Config">
       <UniqueIdentifier>{b6d67c44-47d1-45e7-9e93-4fcdc2dc14c9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Game\States">
+      <UniqueIdentifier>{d72a74c7-12c8-4720-94e8-466d691bc86b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Timber.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Entities\Bee.cpp">
       <Filter>Game\Entities</Filter>
     </ClCompile>
@@ -44,6 +44,9 @@
     </ClCompile>
     <ClCompile Include="Entities\Player.cpp">
       <Filter>Game\Entities</Filter>
+    </ClCompile>
+    <ClCompile Include="States\PlayState.cpp">
+      <Filter>Game\States</Filter>
     </ClCompile>
     <ClCompile Include="Systems\BranchSystem.cpp">
       <Filter>Game\Systems</Filter>
@@ -76,6 +79,9 @@
     </ClInclude>
     <ClInclude Include="Entities\Player.hpp">
       <Filter>Game\Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="States\PlayState.hpp">
+      <Filter>Game\States</Filter>
     </ClInclude>
     <ClInclude Include="Systems\BranchSystem.hpp">
       <Filter>Game\Systems</Filter>

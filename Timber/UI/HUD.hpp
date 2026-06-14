@@ -5,7 +5,7 @@ namespace Timber {
 	class HUD
 	{
 	public:
-		HUD(sf::Font font);
+		HUD(const sf::Font& font);
 
 		void SetScore(int score);
 		void SetFPS(float fps);

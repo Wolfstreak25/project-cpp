@@ -21,6 +21,10 @@ namespace Engine {
 		m_window.display();
 	}
 
+	std::optional<sf::Event> Window::PollEvent() {
+		return m_window.pollEvent();
+	}
+
 	sf::RenderWindow& Window::GetRaw() {
 		return m_window;
 	}

@@ -15,8 +15,8 @@ namespace Engine {
 		/// Called once when the state is popped off the stack.
 		virtual void OnExit() {}
 
-		/// handle a SFML event (keyboard, window close, etc.)
-		virtual void handleEvent(const sf::Event& event) = 0;
+		/// Handle an SFML event (keyboard, window close, etc.)
+		virtual void HandleEvent(const sf::Event& event) = 0;
 
 		/// Update game logic for this state.
 		virtual void Update(float dt) = 0;

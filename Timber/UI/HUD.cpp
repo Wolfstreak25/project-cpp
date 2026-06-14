@@ -3,7 +3,7 @@
 #include <sstream>
 
 namespace Timber {
-	HUD::HUD(sf::Font font)
+	HUD::HUD(const sf::Font& font)
 		:m_scoreText(font, "Score : 0", 30)
 		, m_fpsText(font, "FPS : 0", 30)
 		, m_messageText(font, "Press [ ENTER ] to start", 50)

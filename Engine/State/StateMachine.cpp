@@ -29,6 +29,12 @@ namespace Engine {
 		return m_states.empty();
 	}
 
+	void StateMachine::HandleEvent(const sf::Event& event) {
+		if (auto* state = CurrentState()) {
+			state->HandleEvent(event);
+		}
+	}
+
 	void StateMachine::Update(float dt) {
 		if (auto* state = CurrentState()) {
 			state->Update(dt);

@@ -17,7 +17,7 @@ namespace Engine {
 		void Display();
 
 		/// Poll the next event. Returns std::nullopt if no events remain.
-		std::optional<sf::Event>PollEvent();
+		std::optional<sf::Event> PollEvent();
 		sf::RenderWindow& GetRaw();
 		sf::Vector2u GetSize() const;
 

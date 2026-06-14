@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -137,10 +137,10 @@
     <ClCompile Include="Entities\Cloud.cpp" />
     <ClCompile Include="Entities\Player.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="States\PlayState.cpp" />
     <ClCompile Include="Systems\BranchSystem.cpp" />
     <ClCompile Include="Systems\ScoreSystem.cpp" />
     <ClCompile Include="Systems\TimeSystem.cpp" />
-    <ClCompile Include="Timber.cpp" />
     <ClCompile Include="UI\HUD.cpp" />
     <ClCompile Include="UI\TimeBar.cpp" />
   </ItemGroup>
@@ -150,6 +150,7 @@
     <ClInclude Include="Entities\Branch.hpp" />
     <ClInclude Include="Entities\Cloud.hpp" />
     <ClInclude Include="Entities\Player.hpp" />
+    <ClInclude Include="States\PlayState.hpp" />
     <ClInclude Include="Systems\BranchSystem.hpp" />
     <ClInclude Include="Systems\ScoreSystem.hpp" />
     <ClInclude Include="Systems\TimeSystem.hpp" />
